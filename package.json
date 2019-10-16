@@ -1,10 +1,10 @@
 {
-  "name": "itk-vtk-viewer",
-  "version": "0.0.0-semantically-release",
+  "name": "@tjcorona/itk-vtk-viewer",
+  "version": "8.5.1",
   "description": "ITK/VTK Image Viewer",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kitware/itk-vtk-viewer.git"
+    "url": "git+https://github.com/kitware/itk-vtk-viewer.git"
   },
   "license": "BSD-3-Clause",
   "bugs": {
@@ -76,5 +76,10 @@
   },
   "bin": {
     "itk-vtk-viewer": "./bin/itk-vtk-viewer-cli.js"
-  }
+  },
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "author": ""
 }

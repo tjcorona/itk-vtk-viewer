@@ -184,12 +184,83 @@ class PointSetsUIStore {
     };
 }
 
+class ResourceUIStore {
+  @observable.shallow resource = [];
+
+  initialized = false;
+  sources = [];
+  representationProxies = [];
+
+  @observable selectedResourceIndex = 0;
+  @observable names = [];
+  @observable representations = [];
+  @observable colorBy = [];
+  @observable colors = [];
+  @observable opacities = [];
+  @observable colorPresets = [];
+  @observable colorRanges = [];
+  @computed get hasScalars() {
+    return this.resource.map((component) => {
+      const pointData = component.getPointData();
+      const hasPointDataScalars = !!pointData.getScalars();
+      const cellData = component.getCellData();
+      const hasCellDataScalars = !!cellData.getScalars();
+      return hasPointDataScalars || hasCellDataScalars;
+      })
+    };
+  @computed get colorByOptions() {
+    return this.resource.map((component, index) => {
+      if(!this.hasScalars[index]) {
+        return null
+      }
+      const options = [].concat(
+        component
+          .getPointData()
+          .getArrays()
+          .map((a) => ({
+            label: `Points: ${a.getName()}`,
+            value: `pointData:${a.getName()}`,
+          })),
+        component
+          .getCellData()
+          .getArrays()
+          .map((a) => ({
+            label: `Cells: ${a.getName()}`,
+            value: `cellData:${a.getName()}`,
+          }))
+        )
+      return options;
+    })
+  };
+  @computed get colorByDefault() {
+    return this.resource.map((component, index) => {
+      if(!this.hasScalars[index]) {
+        return null
+      }
+      const pointData = component.getPointData();
+      if (!!pointData.getScalars()) {
+        const activeIndex = pointData.getActiveScalars();
+        const activeArray = pointData.getArrays()[activeIndex];
+        return { label: `Points: ${activeArray.getName()}`, value: `pointData:${activeArray.getName()}` };
+      }
+      const cellData = component.getCellData();
+      if (!!cellData.getScalars()) {
+        const activeIndex = cellData.getActiveScalars();
+        const activeArray = cellData.getArrays()[activeIndex];
+        return { label: `Cells: ${activeArray.getName()}`, value: `cellData:${activeArray.getName()}` };
+      }
+      throw new Error('Should not reach here.')
+      })
+    };
+}
+
 class ViewerStore {
   constructor(proxyManager) {
     this.mainUI = new MainUIStore();
     this.imageUI = new ImageUIStore();
     this.geometriesUI = new GeometriesUIStore();
     this.pointSetsUI = new PointSetsUIStore();
+    this.resourceUI = new ResourceUIStore();
 
     this.id = 'itk-vtk-viewer-' +
       performance
@@ -231,6 +302,7 @@ class ViewerStore {
   imageUI = null;
   geometriesUI = null;
   pointSetsUI = null;
+  resourceUI = null;
 }
 
 export default ViewerStore;

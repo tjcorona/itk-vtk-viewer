@@ -20,13 +20,12 @@ function applyStyle(el, style) {
 
 const createViewer = (
   rootContainer,
-  { image, geometries, pointSets, use2D = false, rotate = true, viewerStyle, viewerState }
+  { image, geometries, pointSets, resource, use2D = false, rotate = true, viewerStyle, viewerState }
 ) => {
   UserInterface.emptyContainer(rootContainer);
 
   const proxyManager = vtkProxyManager.newInstance({ proxyConfiguration });
   window.addEventListener('resize', proxyManager.resizeAllViews);
-
 
   // Todo: deserialize from viewerState, if present
   const store = new ViewerStore(proxyManager);
@@ -263,6 +262,50 @@ const createViewer = (
   );
   store.pointSetsUI.pointSets = pointSets;
 
+  reaction(() => !!store.resourceUI.resource && store.resourceUI.resource.slice(),
+    (resource) => {
+      if(!!!resource || resource.length === 0) {
+        return;
+      }
+
+      resource.forEach((component, index) => {
+        if (store.resourceUI.sources.length <= index) {
+          const uid = `ComponentSource${index}`
+          const componentSource = proxyManager.createProxy('Sources', 'TrivialProducer', {
+            name: uid,
+          });
+          store.resourceUI.sources.push(componentSource)
+          store.resourceUI.sources[index].setInputData(component)
+          proxyManager.createRepresentationInAllViews(componentSource);
+          const componentRepresentation = proxyManager.getRepresentation(componentSource, store.itkVtkView);
+          store.resourceUI.representationProxies.push(componentRepresentation);
+        } else {
+          store.resourceUI.sources[index].setInputData(component);
+          store.resourceUI.representationProxies[index].setVisibility(true);
+        }
+      })
+
+      if(resource.length < store.resourceUI.representationProxies.length) {
+        const proxiesToDisable = store.resourceUI.representationProxies.slice(resource.length);
+        proxiesToDisable.forEach((proxy) => {
+          proxy.setVisibility(false);
+        })
+      }
+
+      if(!store.resourceUI.initialized) {
+        UserInterface.createResourceUI(
+          store,
+        );
+      }
+      store.resourceUI.names = resource.map((component, index) => `Component ${index}`);
+      let representations = store.resourceUI.representations.slice(0, resource.length);
+      const defaultComponentRepresentations = new Array(resource.length);
+      defaultComponentRepresentations.fill('Surface');
+      representations.concat(defaultComponentRepresentations.slice(0, resource.length - representations.length));
+      store.resourceUI.representations = representations;
+    }
+  );
+  store.resourceUI.resource = resource;
 
   store.itkVtkView.resize();
   const resizeSensor = new ResizeSensor(store.container, function() {
@@ -291,6 +334,10 @@ const createViewer = (
 
   publicAPI.setGeometries = (geometries) => {
     store.geometriesUI.geometries = geometries;
+  }
+
+  publicAPI.setResource = (resource) => {
+    store.resourceUI.resource = resource;
   }
 
   publicAPI.setUserInterfaceCollapsed = (collapse) => {
@@ -497,11 +544,16 @@ const createViewer = (
 
   const selectColorMapHandlers = [];
   autorun(() => {
+    if (!store.imageUI) {
+      return;
+    }
     const selectedComponentIndex = store.imageUI.selectedComponentIndex;
-    const colorMap = store.imageUI.colorMaps[selectedComponentIndex];
-    selectColorMapHandlers.forEach((handler) => {
-      handler.call(null, selectedComponentIndex, colorMap);
-    })
+    if (store.imageUI.colorMaps && selectedComponentIndex <= store.imageUI.colorMaps.length) {
+      const colorMap = store.imageUI.colorMaps[selectedComponentIndex];
+      selectColorMapHandlers.forEach((handler) => {
+        handler.call(null, selectedComponentIndex, colorMap);
+      })
+    }
   })
 
   publicAPI.subscribeSelectColorMap = (handler) => {
@@ -785,6 +837,15 @@ const createViewer = (
 
   publicAPI.setGeometryOpacity = (index, opacity) => {
     store.geometriesUI.opacities[index] = opacity;
+  }
+
+  publicAPI.setResourceColor = (index, rgbColor) => {
+    const hexColor = rgb2hex(rgbColor);
+    store.resourceUI.colors[index] = hexColor;
+  }
+
+  publicAPI.setResourceOpacity = (index, opacity) => {
+    store.resourceUI.opacities[index] = opacity;
   }
 
   publicAPI.getViewProxy = () => {

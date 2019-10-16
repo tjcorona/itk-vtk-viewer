@@ -4,6 +4,7 @@ import createMainUI from './createMainUI';
 import createImageUI from './createImageUI';
 import createGeometriesUI from './createGeometriesUI';
 import createPointSetsUI from './createPointSetsUI';
+import createResourceUI from './createResourceUI';
 import emptyContainer from './emptyContainer';
 import getRootContainer from './getRootContainer';
 
@@ -14,6 +15,7 @@ export default {
   createImageUI,
   createGeometriesUI,
   createPointSetsUI,
+  createResourceUI,
   emptyContainer,
   getRootContainer,
 };
