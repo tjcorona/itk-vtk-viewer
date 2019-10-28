@@ -38,16 +38,21 @@ function createResourceUI(
   reaction(() => { return store.resourceUI.names.slice(); },
     (names) => { updateResourceNames(names); }
   )
-  if(store.resourceUI.resource.length > 0) {
+  if(Object.keys(store.resourceUI.resource).length > 0) {
     store.resourceUI.selectedResourceIndex = 0;
   }
   autorun(() => {
       const resource = store.resourceUI.resource;
-      if (resource.length === 1) {
-        store.resourceUI.names = ['Component'];
-      } else {
-        store.resourceUI.names = resource.map((component, index) => `Component ${index}`);
-      }
+//      store.resourceUI.names.replace(resource['names'].slice())
+      store.resourceUI.names = resource['names'].map((name, index) => `${name}`)
+      console.log('createResourceUI.js:48')
+      console.log(store.resourceUI.names.length)
+      console.log(resource['names'].length)
+//      if (resource['components'].length === 1) {
+//        store.resourceUI.names = ['Component'];
+//      } else {
+//        store.resourceUI.names = resource['components'].map((component, index) => `Component ${index}`);
+//      }
     })
 
   createResourceRepresentationSelector(

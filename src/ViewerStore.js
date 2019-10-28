@@ -200,7 +200,7 @@ class ResourceUIStore {
   @observable colorPresets = [];
   @observable colorRanges = [];
   @computed get hasScalars() {
-    return this.resource.map((component) => {
+    return this.resource['components'].map((component) => {
       const pointData = component.getPointData();
       const hasPointDataScalars = !!pointData.getScalars();
       const cellData = component.getCellData();
@@ -209,7 +209,7 @@ class ResourceUIStore {
       })
     };
   @computed get colorByOptions() {
-    return this.resource.map((component, index) => {
+    return this.resource['components'].map((component, index) => {
       if(!this.hasScalars[index]) {
         return null
       }
@@ -233,7 +233,7 @@ class ResourceUIStore {
     })
   };
   @computed get colorByDefault() {
-    return this.resource.map((component, index) => {
+    return this.resource['components'].map((component, index) => {
       if(!this.hasScalars[index]) {
         return null
       }

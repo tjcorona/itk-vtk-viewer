@@ -4,7 +4,9 @@ import vtkVolumeRepresentationProxy from 'vtk.js/Sources/Proxy/Representations/V
 import vtkSliceRepresentationProxy from 'vtk.js/Sources/Proxy/Representations/SliceRepresentationProxy';
 import vtkPiecewiseFunctionProxy from 'vtk.js/Sources/Proxy/Core/PiecewiseFunctionProxy';
 import vtkLookupTableProxy from 'vtk.js/Sources/Proxy/Core/LookupTableProxy';
+import vtkGlyphProxySource from './vtk/GlyphSourceProxy';
 import vtkPointSetRepresentationProxy from './vtk/PointSetRepresentationProxy';
+import vtkResourceRepresentationProxy from './vtk/ResourceRepresentationProxy';
 
 import ItkVtkView from './ItkVtkViewProxy';
 
@@ -38,6 +40,10 @@ const proxyManagerConfiguration = {
         class: vtkProxySource,
         options: {},
       },
+      GlyphProducer: {
+        class: vtkGlyphProxySource,
+        options: {},
+      },
     },
     Representations: {
       Geometry: {
@@ -54,6 +60,10 @@ const proxyManagerConfiguration = {
       },
       PointSet: {
         class: vtkPointSetRepresentationProxy,
+        options: {},
+      },
+      Resource: {
+        class: vtkResourceRepresentationProxy,
         options: {},
       },
     },

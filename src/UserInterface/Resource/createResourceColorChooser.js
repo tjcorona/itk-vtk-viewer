@@ -14,7 +14,7 @@ function createResourceColorChooser(
   const defaultResourceColor = '#ffffff';
 
   reaction(() => {
-    return store.resourceUI.resource.slice();
+    return store.resourceUI.resource['components'].concat(store.resourceUI.resource['instances']);
   },
     (resource) => {
       if(!!!resource || resource.length === 0) {
@@ -65,7 +65,7 @@ function createResourceColorChooser(
       store.resourceUI.colors[selectedResourceIndex] = event.target.value;
     });
 
-  const defaultResourceColors = Array(store.resourceUI.resource.length);
+  const defaultResourceColors = Array(store.resourceUI.resource['components'].length + store.resourceUI.resource['instances'].length);
   defaultResourceColors.fill(defaultResourceColor);
   resourceColorInput.value = defaultResourceColor;
   store.resourceUI.colors = defaultResourceColors;

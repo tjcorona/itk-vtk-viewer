@@ -33,7 +33,7 @@ function createResourceOpacitySlider(
   );
 
   reaction(() => {
-    return store.resourceUI.resource.slice();
+    return store.resourceUI.resource['components'].concat(store.resourceUI.resource['instances']);
   },
     (resource) => {
       if(!!!resource || resource.length === 0) {
@@ -77,7 +77,7 @@ function createResourceOpacitySlider(
       store.resourceUI.opacities[selectedResourceIndex] = Number(event.target.value);
     });
 
-  const defaultResourceOpacities = new Array(store.resourceUI.resource.length);
+  const defaultResourceOpacities = new Array(store.resourceUI.resource['components'].length + store.resourceUI.resource['instances'].length);
   defaultResourceOpacities.fill(defaultResourceOpacity);
   opacityElement.value = defaultResourceOpacity;
   store.resourceUI.opacities = defaultResourceOpacities;

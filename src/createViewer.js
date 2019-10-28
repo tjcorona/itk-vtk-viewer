@@ -262,13 +262,13 @@ const createViewer = (
   );
   store.pointSetsUI.pointSets = pointSets;
 
-  reaction(() => !!store.resourceUI.resource && store.resourceUI.resource.slice(),
+  reaction(() => !!store.resourceUI.resource && store.resourceUI.resource,
     (resource) => {
-      if(!!!resource || resource.length === 0) {
+      if(!!!resource || Object.keys(resource).length === 0) {
         return;
       }
 
-      resource.forEach((component, index) => {
+      resource['components'].forEach((component, index) => {
         if (store.resourceUI.sources.length <= index) {
           const uid = `ComponentSource${index}`
           const componentSource = proxyManager.createProxy('Sources', 'TrivialProducer', {
@@ -276,17 +276,21 @@ const createViewer = (
           });
           store.resourceUI.sources.push(componentSource)
           store.resourceUI.sources[index].setInputData(component)
-          proxyManager.createRepresentationInAllViews(componentSource);
-          const componentRepresentation = proxyManager.getRepresentation(componentSource, store.itkVtkView);
-          store.resourceUI.representationProxies.push(componentRepresentation);
+          const resourceRepresentationUid = `resourceRepresentation${index}`
+          const resourceRepresentation = proxyManager.createProxy('Representations', 'Resource', {
+            name: resourceRepresentationUid,
+          });
+          resourceRepresentation.setInput(componentSource);
+          store.itkVtkView.addRepresentation(resourceRepresentation);
+          store.resourceUI.representationProxies.push(resourceRepresentation);
         } else {
           store.resourceUI.sources[index].setInputData(component);
           store.resourceUI.representationProxies[index].setVisibility(true);
         }
       })
 
-      if(resource.length < store.resourceUI.representationProxies.length) {
-        const proxiesToDisable = store.resourceUI.representationProxies.slice(resource.length);
+      if(resource['components'].length < store.resourceUI.representationProxies.length) {
+        const proxiesToDisable = store.resourceUI.representationProxies.slice(resource['components'].length);
         proxiesToDisable.forEach((proxy) => {
           proxy.setVisibility(false);
         })
@@ -297,11 +301,11 @@ const createViewer = (
           store,
         );
       }
-      store.resourceUI.names = resource.map((component, index) => `Component ${index}`);
-      let representations = store.resourceUI.representations.slice(0, resource.length);
-      const defaultComponentRepresentations = new Array(resource.length);
+      store.resourceUI.names = resource['names'].map((name, index) => `${name}`)
+      let representations = store.resourceUI.representations.slice(0, resource['components'].length);
+      const defaultComponentRepresentations = new Array(resource['components'].length);
       defaultComponentRepresentations.fill('Surface');
-      representations.concat(defaultComponentRepresentations.slice(0, resource.length - representations.length));
+      representations.concat(defaultComponentRepresentations.slice(0, resource['components'].length - representations.length));
       store.resourceUI.representations = representations;
     }
   );

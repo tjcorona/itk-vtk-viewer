@@ -159,7 +159,7 @@ function createResourceRepresentationSelector(
   const defaultResourceRepresentation = 'Surface';
 
   reaction(() => {
-    return store.resourceUI.resource.slice();
+    return store.resourceUI.resource['components'].concat(store.resourceUI.resource['instances']);
   },
     (resource) => {
       if(!!!resource || resource.length === 0) {
@@ -176,7 +176,7 @@ function createResourceRepresentationSelector(
     }
   )
 
-  const defaultResourceRepresentations = new Array(store.resourceUI.resource.length);
+  const defaultResourceRepresentations = new Array(store.resourceUI.resource['components'].length + store.resourceUI.resource['instances'].length);
   defaultResourceRepresentations.fill(defaultResourceRepresentation);
   updateEnabledRepresentationButtons(defaultResourceRepresentation);
   store.resourceUI.representations = defaultResourceRepresentations;

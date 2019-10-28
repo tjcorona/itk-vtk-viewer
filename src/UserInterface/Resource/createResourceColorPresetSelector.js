@@ -18,7 +18,7 @@ function createResourceColorPresetSelector(
   const defaultResourceColorPreset = 'Viridis (matplotlib)';
 
   reaction(() => {
-    return store.resourceUI.resource.slice();
+    return store.resourceUI.resource['components'].concat(store.resourceUI.resource['instances']);
   },
     (resource) => {
       if(!!!resource || resource.length === 0) {
@@ -89,7 +89,7 @@ function createResourceColorPresetSelector(
   } else {
     resourceColorPresetRow.style.display = 'none';
   }
-  const defaultResourceColorPresets = new Array(store.resourceUI.resource.length);
+  const defaultResourceColorPresets = new Array(store.resourceUI.resource['components'].length + store.resourceUI.resource['instances'].length);
   defaultResourceColorPresets.fill(defaultResourceColorPreset);
   presetSelector.value = defaultResourceColorPreset;
   store.resourceUI.colorPresets = defaultResourceColorPresets;

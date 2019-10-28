@@ -16,7 +16,7 @@ function createResourceColorBySelector(
   colorBySelector.id = `${store.id}-colorBySelector`;
 
   reaction(() => {
-    return store.resourceUI.resource.slice();
+    return store.resourceUI.resource['components'].concat(store.resourceUI.resource['instances']);
   },
     (resource) => {
       if(!!!resource || resource.length === 0) {
