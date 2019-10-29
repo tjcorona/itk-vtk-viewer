@@ -21,65 +21,63 @@ const PROPERTIES_DEFAULT = {
 };
 
 // ----------------------------------------------------------------------------
-// vtkResourceRepresentationProxy methods
+// vtkGlyphRepresentationProxy methods
 // ----------------------------------------------------------------------------
 
-function vtkResourceRepresentationProxy(publicAPI, model) {
+function vtkGlyphRepresentationProxy(publicAPI, model) {
   // Set our className
-  model.classHierarchy.push('vtkResourceRepresentationProxy');
+  model.classHierarchy.push('vtkGlyphRepresentationProxy');
 
   // Internals
-  model.mapper = vtkMapper.newInstance({
-    interpolateScalarsBeforeMapping: true,
-    useLookupTableScalarRange: true,
-    scalarVisibility: false,
-  });
-  model.actor = vtkActor.newInstance();
-  model.property = model.actor.getProperty();
-
-  model.glyphMapper = vtkGlyph3DMapper.newInstance({
+  model.mapper = vtkGlyph3DMapper.newInstance({
     interpolateScalarsBeforeMapping: true,
     useLookupTableScalarRange: true,
     scalarVisibility: false,
   });
 
-  publicAPI.setInputDataset = (ds, index) => {
-    if (index === 0) {
-      model.mapper.setInputData(ds);
-    }
-    else if (index === 1) {
-      model.mapper.setInputData(ds);
-    }
-    if (model.prototype !== ds) {
-      model.prototype = ds;
-      model.type = type || ds.getClassName();
-      publicAPI.modified();
-      publicAPI.invokeDatasetChange();
-    }
+  publicAPI.setPlacement = (inputDataSet) => {
+      console.log('GlyphRepresentationProxy:39')
+      console.log(typeof inputDataSet)
+      console.log(inputDataSet)
+      model.mapper.setInputData(inputDataSet, 0);
+//      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
+//      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
   };
 
-  function updateMappers(inputDataSet) {
-    console.log('ResourceRepresentationProxy:47')
-    if (typeof inputDataSet === 'vtkGlyphSourceProxy') {
-      model.glyphMapper.setInputData(inputDataSet.getPlacement(), 0);
-      model.glyphMapper.setInputData(inputDataSet.getPrototype(), 1);
-      model.mapper.setInputData(null);
-    }
-    else {
-      model.mapper.setInputData(inputDataSet);
-      model.glyphMapper.setInputData(null, 0);
-      model.glyphMapper.setInputData(null, 1);
-    }
-  }
+  publicAPI.setPrototype = (inputDataSet) => {
+      console.log('GlyphRepresentationProxy:48')
+      console.log(typeof inputDataSet)
+      console.log(inputDataSet)
+      model.mapper.setInputData(inputDataSet, 1);
+//      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
+//      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
+  };
+
+//  function setPlacement(inputDataSet) {
+//      console.log('GlyphRepresentationProxy:39')
+//      console.log(typeof inputDataSet)
+//      console.log(inputDataSet)
+//      model.mapper.setInputData(inputDataSet, 0);
+////      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
+////      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
+//  }
+
+//  function setPrototype(inputDataSet) {
+//      console.log('GlyphRepresentationProxy:48')
+//      console.log(typeof inputDataSet)
+//      console.log(inputDataSet)
+//      model.mapper.setInputData(inputDataSet, 1);
+////      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
+////      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
+//  }
 
   // Auto connect mappers
-  model.sourceDependencies.push({ setInputData: updateMappers });
+  model.sourceDependencies.push({ setInputData: publicAPI.setPlacement });
   // connect rendering pipeline
-  model.actor.setMapper(model.mapper);
+  model.actor = vtkActor.newInstance();
+  model.property = model.actor.getProperty();
+  model.actor.setMapper(model.mapper)
   model.actors.push(model.actor);
-  model.glyphActor = vtkActor.newInstance();
-  model.glyphActor.setMapper(model.glyphMapper)
-  model.actors.push(model.glyphActor);
 }
 
 // ----------------------------------------------------------------------------
@@ -99,7 +97,7 @@ export function extend(publicAPI, model, initialValues = {}) {
   vtkAbstractRepresentationProxy.extend(publicAPI, model);
 
   // Object specific methods
-  vtkResourceRepresentationProxy(publicAPI, model);
+  vtkGlyphRepresentationProxy(publicAPI, model);
 
   // Map proxy properties
   macro.proxyPropertyState(
@@ -126,7 +124,7 @@ export function extend(publicAPI, model, initialValues = {}) {
 
 export const newInstance = macro.newInstance(
   extend,
-  'vtkResourceRepresentationProxy'
+  'vtkGlyphRepresentationProxy'
 );
 
 // ----------------------------------------------------------------------------

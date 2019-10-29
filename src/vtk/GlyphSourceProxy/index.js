@@ -11,21 +11,38 @@ function vtkGlyphSourceProxy(publicAPI, model) {
   // --------------------------------------------------------------------------
 
   publicAPI.setPrototype = (ds, type) => {
-    if (model.prototype !== ds) {
-      model.prototype = ds;
+    console.log('GlyphSource:14')
+    if (model._prototype !== ds) {
+      model._prototype = ds;
       model.type = type || ds.getClassName();
       publicAPI.modified();
       publicAPI.invokeDatasetChange();
     }
   };
 
+  publicAPI.getPrototype = () => {
+    console.log('GlyphSource:24')
+    return model._prototype;
+  };
+
   publicAPI.setPlacement = (ds, type) => {
+    console.log('GlyphSource:29')
     if (model.placement !== ds) {
       model.placement = ds;
       model.type = type || ds.getClassName();
       publicAPI.modified();
       publicAPI.invokeDatasetChange();
     }
+  };
+
+  publicAPI.getPlacement = () => {
+    console.log('GlyphSource:39')
+    return model.placement;
+  };
+
+  publicAPI.getDataset = () => {
+    console.log('GlyphSource:44')
+    return model.placement;
   };
 
   // --------------------------------------------------------------------------
@@ -59,7 +76,6 @@ export function extend(publicAPI, model, initialValues = {}) {
   macro.get(publicAPI, model, [
     'name',
     'type',
-    'prototype',
     'placement',
   ]);
   macro.set(publicAPI, model, ['name']);
