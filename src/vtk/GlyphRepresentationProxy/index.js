@@ -36,40 +36,12 @@ function vtkGlyphRepresentationProxy(publicAPI, model) {
   });
 
   publicAPI.setPlacement = (inputDataSet) => {
-      console.log('GlyphRepresentationProxy:39')
-      console.log(typeof inputDataSet)
-      console.log(inputDataSet)
       model.mapper.setInputData(inputDataSet, 0);
-//      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
-//      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
   };
 
   publicAPI.setPrototype = (inputDataSet) => {
-      console.log('GlyphRepresentationProxy:48')
-      console.log(typeof inputDataSet)
-      console.log(inputDataSet)
       model.mapper.setInputData(inputDataSet, 1);
-//      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
-//      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
   };
-
-//  function setPlacement(inputDataSet) {
-//      console.log('GlyphRepresentationProxy:39')
-//      console.log(typeof inputDataSet)
-//      console.log(inputDataSet)
-//      model.mapper.setInputData(inputDataSet, 0);
-////      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
-////      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
-//  }
-
-//  function setPrototype(inputDataSet) {
-//      console.log('GlyphRepresentationProxy:48')
-//      console.log(typeof inputDataSet)
-//      console.log(inputDataSet)
-//      model.mapper.setInputData(inputDataSet, 1);
-////      model.mapper.setInputData(inputDataSet.getPlacement(), 0);
-////      model.mapper.setInputData(inputDataSet.getPrototype(), 1);
-//  }
 
   // Auto connect mappers
   model.sourceDependencies.push({ setInputData: publicAPI.setPlacement });

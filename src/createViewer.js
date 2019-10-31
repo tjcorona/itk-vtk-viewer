@@ -264,7 +264,6 @@ const createViewer = (
 
   reaction(() => !!store.resourceUI.resource && store.resourceUI.resource,
     (resource) => {
-      console.log('createViewer:267')
       if(!!!resource || Object.keys(resource).length === 0) {
         return;
       }
@@ -276,13 +275,11 @@ const createViewer = (
             name: uid,
           });
           store.resourceUI.sources.push(componentSource)
-          console.log('Assigning input data to trivial producer')
           store.resourceUI.sources[index].setInputData(component)
           const componentRepresentationUid = `componentRepresentation${index}`
           const componentRepresentation = proxyManager.createProxy('Representations', 'Geometry', {
             name: componentRepresentationUid,
           });
-          console.log('Assigning input to geometry representation')
           componentRepresentation.setInput(componentSource);
           store.itkVtkView.addRepresentation(componentRepresentation);
           store.resourceUI.representationProxies.push(componentRepresentation);
@@ -290,11 +287,9 @@ const createViewer = (
           store.resourceUI.sources[index].setInputData(component);
           store.resourceUI.representationProxies[index].setVisibility(true);
         }
-        console.log('createViewer:290')
       })
 
       resource['instances'].forEach((instance, index) => {
-        console.log('createViewer:295')
           const idx = resource['components'].length + index;
         if (store.resourceUI.sources.length <= idx) {
 
@@ -307,29 +302,21 @@ const createViewer = (
             name: prototypeuid,
           });
           store.resourceUI.sources.push(instanceSource)
-        console.log('createViewer:303')
           store.resourceUI.sources[idx].setInputData(instance)
           prototypeSource.setInputData(resource['prototypes'][index])
-          console.log('createViewer:306')
           const instanceRepresentationUid = `instanceRepresentation${index}`
           const instanceRepresentation = proxyManager.createProxy('Representations', 'Glyph', {
             name: instanceRepresentationUid,
           });
-        console.log('createViewer:311')
-        console.log(instanceRepresentation)
           instanceRepresentation.setPlacement(instance);
           instanceRepresentation.setPrototype(resource['prototypes'][index]);
-        console.log('createViewer:313')
           store.itkVtkView.addRepresentation(instanceRepresentation);
-        console.log('createViewer:315')
           store.resourceUI.representationProxies.push(instanceRepresentation);
-        console.log('createViewer:317')
         } else {
           store.resourceUI.sources[idx].setPlacement(instance)
           store.resourceUI.sources[idx].setPrototype(resource['prototypes'][index])
           store.resourceUI.representationProxies[idx].setVisibility(true);
         }
-        console.log('createViewer:323')
       })
 
       if(resource['components'].length + resource['instances'].length < store.resourceUI.representationProxies.length) {

@@ -43,16 +43,7 @@ function createResourceUI(
   }
   autorun(() => {
       const resource = store.resourceUI.resource;
-//      store.resourceUI.names.replace(resource['names'].slice())
       store.resourceUI.names = resource['names'].map((name, index) => `${name}`)
-      console.log('createResourceUI.js:48')
-      console.log(store.resourceUI.names.length)
-      console.log(resource['names'].length)
-//      if (resource['components'].length === 1) {
-//        store.resourceUI.names = ['Component'];
-//      } else {
-//        store.resourceUI.names = resource['components'].map((component, index) => `Component ${index}`);
-//      }
     })
 
   createResourceRepresentationSelector(
